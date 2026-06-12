@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PickleQ
 
-## Getting Started
+A pickleball court booking and queueing system for the Philippines, starting in provincial markets.
 
-First, run the development server:
+Court owners pay for the service. Players use it to book courts, invite friends, or join open games.
+
+---
+
+## Prerequisites
+
+Make sure you have the following installed on your machine before getting started:
+
+- [Node.js](https://nodejs.org/) v20 or higher
+- npm (comes with Node.js)
+- A [Supabase](https://supabase.com) account with a project created
+
+---
+
+## Local Setup
+
+### 1. Clone the repo
+
+```bash
+git clone <repo-url>
+cd pickleq
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+This installs everything in `package.json`. The key packages already included are:
+
+| Package | Purpose |
+|---|---|
+| `next` | Next.js framework |
+| `react`, `react-dom` | React |
+| `drizzle-orm` | ORM for querying the database |
+| `postgres` | Postgres driver used by Drizzle |
+| `tailwindcss` | Utility-first CSS framework |
+| `typescript` | TypeScript compiler |
+| `drizzle-kit` | CLI for generating and running DB migrations (dev only) |
+
+If you ever need to install them individually:
+
+```bash
+# Core dependencies
+npm install drizzle-orm postgres
+
+# Dev dependencies
+npm install -D drizzle-kit
+```
+
+### 3. Set up environment variables
+
+Create a `.env.local` file in the project root:
+
+```bash
+cp .env.example .env.local
+```
+
+Then fill in your values:
+
+```env
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.<your-project-ref>.supabase.co:5432/postgres
+```
+
+To find your `DATABASE_URL`:
+1. Go to your Supabase project dashboard
+2. Click **Connect** (top of the page)
+3. Choose **Direct connection** and **URI** type
+4. Copy the connection string and replace `[YOUR-PASSWORD]` with your database password
+
+### 4. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
 
-## Learn More
+- **Framework:** Next.js 15 (App Router) + TypeScript
+- **Styling:** Tailwind CSS
+- **ORM:** Drizzle
+- **Database:** Supabase Postgres
+- **Auth:** Supabase Auth (phone OTP + email)
+- **Payments:** PayMongo (GCash)
+- **Email:** Resend
+- **SMS:** Semaphore
+- **Hosting:** Vercel
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the local development server |
+| `npm run build` | Build for production |
+| `npm run start` | Run the production build locally |
+| `npm run lint` | Run ESLint |
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/
+│   ├── (player)/          # player-facing pages
+│   ├── (owner)/           # owner console pages
+│   ├── book/[facilityId]/ # QR landing page
+│   ├── api/               # backend API routes
+│   └── layout.tsx
+├── components/            # shared React components
+├── lib/
+│   ├── db/                # Drizzle schema and client
+│   ├── auth/              # Supabase Auth helpers
+│   ├── payments/          # PayMongo integration
+│   ├── notifications/     # email, SMS, push dispatchers
+│   └── services/          # business logic (booking, pricing, flags)
+└── types/                 # shared TypeScript types
+drizzle/                   # migration files
+```
+
+---
+
+## Database
+
+This project uses [Drizzle ORM](https://orm.drizzle.team/) with Supabase Postgres.
+
+Migrations will be added as the schema is built out. Instructions for running migrations will be documented here.

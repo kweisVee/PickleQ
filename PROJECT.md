@@ -24,17 +24,18 @@ There are three user types:
 
 ## Tech stack
 
-- **Frontend:** Next.js 15 (App Router) + TypeScript + Tailwind CSS
-- **Backend:** Next.js API routes (TypeScript)
-- **ORM:** Drizzle
-- **Database:** Supabase Postgres (with PostGIS extension for geo queries)
-- **Auth:** Supabase Auth (phone OTP and email, user picks at signup)
-- **Payments:** PayMongo (for GCash) + cash tracked at the counter
-- **Email:** Resend (booking receipts, owner reports)
-- **SMS:** Semaphore (OTP and urgent notifications only)
-- **Push:** PWA web push (real-time updates)
-- **Hosting:** Vercel
-- **Background jobs:** Inngest or Trigger.dev (for reminders, weekly payouts)
+- **Next.js 15** — the core framework. Handles both frontend (React pages) and backend (API routes) in one project. Think Spring Boot + a frontend framework combined. One codebase, one deployment.
+- **TypeScript** — the language used everywhere, frontend and backend. JavaScript with types — like Java's type system but for JS.
+- **Tailwind CSS** — handles styling. You write utility classes directly on HTML elements (e.g. `className="bg-blue-500 p-4"`) instead of separate CSS files.
+- **Drizzle** — the ORM. Like JPA/Hibernate in Spring Boot. Tables are defined as TypeScript objects and queried with a type-safe API instead of raw SQL strings.
+- **Supabase Postgres** — managed Postgres database in the cloud. Supabase hosts it; we connect to it like any Postgres DB.
+- **Supabase Auth** — handles login/signup (phone OTP, email magic link). Like Spring Security but fully managed externally. Does not touch our app's own database directly.
+- **PayMongo** — Philippine payment gateway for GCash payments. Like Stripe but for the Philippines.
+- **Resend** — sends emails (booking receipts, owner reports). Managed email service.
+- **Semaphore** — Philippine SMS gateway. Used for OTP at signup and urgent reminders. Kept minimal because SMS costs money.
+- **PWA web push** — real-time in-app notifications (e.g. someone joined your open game). Installable from the browser, no app store needed for v1.
+- **Vercel** — hosting. Deploys Next.js apps natively.
+- **Background jobs** — Inngest or Trigger.dev (TBD). For reminders, weekly payouts, and other async tasks.
 
 The app is a **PWA (Progressive Web App)** — installable from the browser, no app store needed for v1. Mobile native (React Native) is planned for v2 once there's traction.
 
@@ -160,6 +161,8 @@ Three channels with clear jobs:
 9. **Phone number is verified at signup but not the only login.** Users can also sign up with email. Phone OTP costs money, so we use it sparingly after signup.
 
 10. **Booking creation must be atomic** to prevent double-booking. Use a Postgres transaction with an exclusion constraint on `(court_id, time_range)`.
+
+11. **`users.id` is separate from `users.auth_id`.** Supabase Auth has its own internal `users` table we don't control. If we used Supabase's ID as our primary key, switching auth providers later would break every foreign key in our database. `id` is our internal PK; `auth_id` is just a lookup bridge: "given this Supabase login, find our user." Same reason you wouldn't use Google's user ID as your PK if integrating SSO.
 
 ---
 
