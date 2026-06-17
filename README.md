@@ -42,12 +42,14 @@ This installs everything in `package.json`. The key packages already included ar
 | `tailwindcss` | Utility-first CSS framework |
 | `typescript` | TypeScript compiler |
 | `drizzle-kit` | CLI for generating and running DB migrations (dev only) |
+| `@supabase/supabase-js` | Supabase client (Auth + storage) |
+| `@supabase/ssr` | Supabase SSR helpers for Next.js App Router (cookie-based sessions) |
 
 If you ever need to install them individually:
 
 ```bash
 # Core dependencies
-npm install drizzle-orm postgres
+npm install drizzle-orm postgres @supabase/supabase-js @supabase/ssr
 
 # Dev dependencies
 npm install -D drizzle-kit

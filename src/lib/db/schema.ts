@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, timestamp, time } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, integer, timestamp, time, date } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -24,6 +24,31 @@ export const facilities = pgTable('facilities', {
   increment: integer('increment').notNull().default(30),
   openTime: time('open_time').notNull().default('06:00'),
   closeTime: time('close_time').notNull().default('22:00'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const courts = pgTable('courts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  facilityId: uuid('facility_id').notNull().references(() => facilities.id),
+  name: text('name').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const pricingRules = pgTable('pricing_rules', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  facilityId: uuid('facility_id').notNull().references(() => facilities.id),
+  // 0 = Sunday, 1 = Monday, ..., 6 = Saturday. Null means applies to all days.
+  dayOfWeek: integer('day_of_week'),
+  startTime: time('start_time').notNull(),
+  endTime: time('end_time').notNull(),
+  // Price in centavos (e.g. 50000 = ₱500.00) to avoid floating point issues
+  pricePerSlot: integer('price_per_slot').notNull(),
+  // Higher priority wins when multiple rules overlap
+  priority: integer('priority').notNull().default(0),
+  activeFrom: date('active_from'),
+  activeUntil: date('active_until'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
