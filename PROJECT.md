@@ -211,6 +211,13 @@ pickleq/
 
 ---
 
+## Auth setup notes
+
+- **Email magic link** — enabled in Supabase (Email provider ON, "Confirm email" ON). Ready to use.
+- **Phone OTP** — deferred. Supabase does not natively support Semaphore. Will use Twilio for phone OTP when ready for production. Twilio account not yet created.
+
+---
+
 ## Open questions to revisit
 
 - Will PickleQ collect all payments centrally and pay owners weekly, or will each owner have their own PayMongo merchant account? (Leaning: PickleQ collects centrally for v1, to reduce owner onboarding friction.)
